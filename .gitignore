@@ -78,4 +78,4 @@ fabric.properties
 
 .gradle
 .idea
-.build
+build
