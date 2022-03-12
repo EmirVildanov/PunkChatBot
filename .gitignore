@@ -79,3 +79,4 @@ fabric.properties
 .gradle
 .idea
 build
+vkconfig.properties
