@@ -1,3 +1,4 @@
 fun main() {
-    println("Hello World!")
+    val vkServer = VkServer()
+    vkServer.start()
 }

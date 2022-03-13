@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.vk.api:sdk:1.0.14")
     testImplementation(kotlin("test"))
 }
 
