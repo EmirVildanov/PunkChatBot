@@ -2,8 +2,11 @@ import com.vk.api.sdk.exceptions.ClientException
 import java.util.concurrent.Executors
 
 
-class VkServer {
+object VkServer {
     private var vkCore: VkCore? = null
+
+    private const val RECONNECT_TIME_MILLISECONDS = 10000
+    private const val BOT_RESPONSE_WAITING_TIME_MILLISECONDS = 300L
 
     init {
         try {
@@ -24,7 +27,7 @@ class VkServer {
                 if (message != null) {
                     println("Received message: ${message.text}")
                     val exec = Executors.newCachedThreadPool()
-                    exec.execute(Messenger(message))
+                    exec.execute(CommandExecutor(message))
                 }
             } catch (e: ClientException) {
                 println("Unexpected error while listening the can't appeared")
@@ -32,10 +35,5 @@ class VkServer {
                 Thread.sleep(RECONNECT_TIME_MILLISECONDS.toLong())
             }
         }
-    }
-
-    companion object {
-        const val RECONNECT_TIME_MILLISECONDS = 10000
-        const val BOT_RESPONSE_WAITING_TIME_MILLISECONDS = 300L
     }
 }

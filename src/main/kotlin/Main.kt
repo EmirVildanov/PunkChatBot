@@ -1,4 +1,4 @@
 fun main() {
-    val vkServer = VkServer()
+    val vkServer = VkServer
     vkServer.start()
 }

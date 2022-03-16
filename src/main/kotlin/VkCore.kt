@@ -6,6 +6,7 @@ import com.vk.api.sdk.exceptions.ApiException
 import com.vk.api.sdk.exceptions.ClientException
 import com.vk.api.sdk.httpclient.HttpTransportClient
 import com.vk.api.sdk.objects.messages.Keyboard
+import com.vk.api.sdk.objects.messages.KeyboardButtonColor
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.Fields
 import com.vk.api.sdk.objects.users.User
@@ -20,6 +21,9 @@ object VkCore {
     private var ts = 0
     private var actor: GroupActor? = null
     private var maxMsgId = -1
+
+    private var keyboardCreator: KeyboardCreator = KeyboardCreator
+    private var currentChatState: ChatState = ChatState.MAIN_MENU
 
     init {
         val transportClient: TransportClient = HttpTransportClient.getInstance()
@@ -95,7 +99,7 @@ object VkCore {
         return null
     }
 
-    fun sendMessage(msg: String, peerId: Int, keyboard: Keyboard? = null) {
+    fun sendMessage(msg: String, peerId: Int, keyboardEnabled: Boolean = true) {
         try {
             val messagesSendQuery = vk
                 .messages()
@@ -103,7 +107,8 @@ object VkCore {
                 .randomId(generateRandomId(peerId))
                 .peerId(peerId)
                 .message(msg)
-            if (keyboard != null) {
+            if (keyboardEnabled) {
+                val keyboard = keyboardCreator.createStateKeyboard(currentChatState)
                 messagesSendQuery.keyboard(keyboard)
             }
             messagesSendQuery.execute()

@@ -1,18 +1,22 @@
-package Command
-import VkCore
+package command
+
+import KeyboardCreator
 import com.vk.api.sdk.objects.messages.Message
 
-
-class UserIdIdentifierCommand : Command("My id") {
+class FillFormCommand : Command() {
     override fun execute(message: Message) {
         val userId = message.fromId
         val userInfo = VkCore.getUserInfoById(userId)
         if (userInfo != null) {
-            val responseText = "Your id is ${userId}. You are ${userInfo.firstName}"
+            val responseText = "Executed fill form command"
             VkCore.sendMessage(responseText, userId)
             println("Send message to $userId")
         } else {
             println("Server can't get user info")
         }
+    }
+
+    companion object {
+        const val COMMAND_NAME = KeyboardCreator.FILL_FORM
     }
 }
