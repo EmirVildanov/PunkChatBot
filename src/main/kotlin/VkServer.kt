@@ -1,12 +1,18 @@
 import com.vk.api.sdk.exceptions.ClientException
+import com.vk.api.sdk.objects.base.Sex
+import data.UserForm
+import enums.Faculty
+import enums.Interest
 import java.util.concurrent.Executors
 
 
 object VkServer {
     private var vkCore: VkCore? = null
-
     private const val RECONNECT_TIME_MILLISECONDS = 10000
     private const val BOT_RESPONSE_WAITING_TIME_MILLISECONDS = 300L
+
+    private val usersInfo =
+        listOf(UserForm("Emir", "Vildanov", 20, Faculty.MATH_MECH, Sex.MALE, mutableListOf(Interest.PHOTOGRAPHY)))
 
     init {
         try {
@@ -35,5 +41,13 @@ object VkServer {
                 Thread.sleep(RECONNECT_TIME_MILLISECONDS.toLong())
             }
         }
+    }
+
+    fun getUserInfo(userId: Int): UserForm {
+        return usersInfo[0]
+    }
+
+    fun loadUserInfo(userId: Int, userDbInfo: UserForm) {
+
     }
 }

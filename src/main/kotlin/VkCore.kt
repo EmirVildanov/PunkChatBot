@@ -5,11 +5,10 @@ import com.vk.api.sdk.client.actors.GroupActor
 import com.vk.api.sdk.exceptions.ApiException
 import com.vk.api.sdk.exceptions.ClientException
 import com.vk.api.sdk.httpclient.HttpTransportClient
-import com.vk.api.sdk.objects.messages.Keyboard
-import com.vk.api.sdk.objects.messages.KeyboardButtonColor
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.Fields
 import com.vk.api.sdk.objects.users.User
+import enums.ChatState
 import java.io.FileInputStream
 import java.io.IOException
 import java.util.*
@@ -23,7 +22,7 @@ object VkCore {
     private var maxMsgId = -1
 
     private var keyboardCreator: KeyboardCreator = KeyboardCreator
-    private var currentChatState: ChatState = ChatState.MAIN_MENU
+    var chatState: ChatState = ChatState.MAIN_MENU
 
     init {
         val transportClient: TransportClient = HttpTransportClient.getInstance()
@@ -108,7 +107,7 @@ object VkCore {
                 .peerId(peerId)
                 .message(msg)
             if (keyboardEnabled) {
-                val keyboard = keyboardCreator.createStateKeyboard(currentChatState)
+                val keyboard = keyboardCreator.createStateKeyboard(chatState)
                 messagesSendQuery.keyboard(keyboard)
             }
             messagesSendQuery.execute()
