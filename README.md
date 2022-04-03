@@ -1,7 +1,9 @@
 # PunkChatBot
 
 ## About
-![Bot avatar](markup/botAvatar.jpeg)
+
+[//]: # (![Bot avatar]&#40;markup/botAvatar.jpg 250x250&#41;)
+<img src="markup/botAvatar.jpg" width="300" height="300" alt="botAvatar">
 
 Chat ~~roulette~~ bot for finding people to talk for SPbU students.
 
