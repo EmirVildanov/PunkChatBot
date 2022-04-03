@@ -17,7 +17,7 @@ class FillFormCommand(private val toState: ChatState) : KeyboardCommand() {
                 ChatState.FILLING_FORM_FACULTY -> userDbInfo.faculty = Faculty.CHEM_PHAC
                 ChatState.FILLING_FORM_SEX -> userDbInfo.sex = Sex.FEMALE
                 ChatState.FILLING_FORM_DORMITORY -> userDbInfo.dormitoryNumber = 21
-                ChatState.FILLING_FORM_INTERESTS -> userDbInfo.interests.add(Interest.BOARD_GAME)
+                ChatState.FILLING_FORM_INTERESTS -> userDbInfo.interests?.add(Interest.BOARD_GAME)
             }
             VkServer.loadUserInfo(userId, userDbInfo)
         }

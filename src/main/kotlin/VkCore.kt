@@ -3,6 +3,7 @@ import com.vk.api.sdk.client.TransportClient
 import com.vk.api.sdk.client.VkApiClient
 import com.vk.api.sdk.client.actors.GroupActor
 import com.vk.api.sdk.exceptions.ApiException
+import com.vk.api.sdk.exceptions.ApiParamException
 import com.vk.api.sdk.exceptions.ClientException
 import com.vk.api.sdk.httpclient.HttpTransportClient
 import com.vk.api.sdk.objects.messages.Message
@@ -111,8 +112,11 @@ object VkCore {
                 messagesSendQuery.keyboard(keyboard)
             }
             messagesSendQuery.execute()
+        } catch (e: ApiParamException) {
+//            e.printStackTrace()
+            print(1)
         } catch (e: ApiException) {
-            e.printStackTrace()
+//            e.printStackTrace()
         } catch (e: ClientException) {
             e.printStackTrace()
         }

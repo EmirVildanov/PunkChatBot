@@ -9,8 +9,8 @@ import command.text.UserIdIdentifierCommand
 import enums.ChatState
 
 
-class CommandExecutor(private val message: Message) : Runnable {
-    override fun run() {
+object CommandExecutor {
+    fun execute(message: Message) {
         val command = when (val messageText = message.text) {
             KeyboardCreator.FILL_FORM -> FillFormCommand(ChatState.FILLING_FORM_MAIN_MENU)
             KeyboardCreator.SHOW_FORM -> ShowFormCommand()

@@ -3,7 +3,9 @@ import com.vk.api.sdk.objects.base.Sex
 import data.UserForm
 import enums.Faculty
 import enums.Interest
-import java.util.concurrent.Executors
+import kotlinx.coroutines.*
+import org.litote.kmongo.coroutine.coroutine
+import org.litote.kmongo.reactivestreams.KMongo
 
 
 object VkServer {
@@ -11,8 +13,24 @@ object VkServer {
     private const val RECONNECT_TIME_MILLISECONDS = 10000
     private const val BOT_RESPONSE_WAITING_TIME_MILLISECONDS = 300L
 
+    val client = KMongo.createClient().coroutine
+    val database = client.getDatabase("chatbot")
+    val collection = database.getCollection<UserForm>()
+
+    // kotlinx.serialization.MissingFieldException
+
     private val usersInfo =
-        listOf(UserForm("Emir", "Vildanov", 20, Faculty.MATH_MECH, Sex.MALE, mutableListOf(Interest.PHOTOGRAPHY)))
+        listOf(
+            UserForm(
+                1,
+                "Emir",
+                "Vildanov",
+                20,
+                Faculty.MATH_MECH,
+                Sex.MALE,
+                mutableListOf(Interest.PHOTOGRAPHY),
+            )
+        )
 
     init {
         try {
@@ -24,23 +42,37 @@ object VkServer {
         }
     }
 
-    fun start() {
-        println("Running server...")
+    fun start() = runBlocking {
+        customLog("Running server...")
         while (true) {
-            Thread.sleep(BOT_RESPONSE_WAITING_TIME_MILLISECONDS)
+            delay(BOT_RESPONSE_WAITING_TIME_MILLISECONDS)
             try {
                 val message = vkCore?.getMessage()
                 if (message != null) {
-                    println("Received message: ${message.text}")
-                    val exec = Executors.newCachedThreadPool()
-                    exec.execute(CommandExecutor(message))
+                    customLog("Received message: ${message.text}")
+                    supervisorScope {
+                        try {
+//                            withContext(Dispatchers.Default) {
+//                                CommandExecutor.execute(message)
+//                            }
+                            throw Exception()
+                        } catch (e: Exception) {
+//                            customLog("Unexpected exception: ${e.message}")
+                            customLog("Unexpected exception")
+                            VkCore.sendMessage("Unexpected error occurred on the server side", message.fromId)
+                        }
+                    }
                 }
             } catch (e: ClientException) {
-                println("Unexpected error while listening the can't appeared")
-                println("Connecting again in " + RECONNECT_TIME_MILLISECONDS / 1000 + " seconds")
-                Thread.sleep(RECONNECT_TIME_MILLISECONDS.toLong())
+                customLog("Unexpected error while listening the can't appeared")
+                customLog("Connecting again in " + RECONNECT_TIME_MILLISECONDS / 1000 + " seconds")
+                delay(RECONNECT_TIME_MILLISECONDS.toLong())
             }
         }
+    }
+
+    fun customLog(message: String) {
+        println(message)
     }
 
     fun getUserInfo(userId: Int): UserForm {
