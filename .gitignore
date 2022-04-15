@@ -80,3 +80,4 @@ fabric.properties
 .idea
 build
 vkconfig.properties
+src/main/kotlin/funny
