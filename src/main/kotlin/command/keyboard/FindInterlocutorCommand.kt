@@ -1,6 +1,6 @@
 package command.keyboard
 
-import VkCore
+import VkServer
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.User
 import enums.ChatState
@@ -10,8 +10,8 @@ class FindInterlocutorCommand : KeyboardCommand() {
         return STARTED_LOOKING_FOR_YOUR_INTERLOCUTOR
     }
 
-    override fun changeState(vkCore: VkCore) {
-        vkCore.chatState = ChatState.FINDING_INTERLOCUTOR
+    override fun changeState(userId: Int) {
+        VkServer.changeUserState(userId, ChatState.FINDING_INTERLOCUTOR)
     }
 
     companion object {

@@ -23,7 +23,6 @@ object VkCore {
     private var maxMsgId = -1
 
     private var keyboardCreator: KeyboardCreator = KeyboardCreator
-    var chatState: ChatState = ChatState.MAIN_MENU
 
     init {
         val transportClient: TransportClient = HttpTransportClient.getInstance()
@@ -99,24 +98,23 @@ object VkCore {
         return null
     }
 
-    fun sendMessage(msg: String, peerId: Int, keyboardEnabled: Boolean = true) {
+    fun sendMessage(msg: String, userId: Int, state: ChatState, keyboardEnabled: Boolean = true) {
         try {
             val messagesSendQuery = vk
                 .messages()
                 .send(actor)
-                .randomId(generateRandomId(peerId))
-                .peerId(peerId)
+                .randomId(generateRandomId(userId))
+                .peerId(userId)
                 .message(msg)
             if (keyboardEnabled) {
-                val keyboard = keyboardCreator.createStateKeyboard(chatState)
+                val keyboard = keyboardCreator.createStateKeyboard(state)
                 messagesSendQuery.keyboard(keyboard)
             }
             messagesSendQuery.execute()
         } catch (e: ApiParamException) {
-//            e.printStackTrace()
-            print(1)
+            e.printStackTrace()
         } catch (e: ApiException) {
-//            e.printStackTrace()
+            e.printStackTrace()
         } catch (e: ClientException) {
             e.printStackTrace()
         }

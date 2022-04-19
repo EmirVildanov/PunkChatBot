@@ -2,7 +2,6 @@
 
 ## About
 
-[//]: # (![Bot avatar]&#40;markup/botAvatar.jpg 250x250&#41;)
 <img src="markup/botAvatar.jpg" width="300" height="300" alt="botAvatar">
 
 Chat ~~roulette~~ bot for finding people to talk for SPbU students.
@@ -16,6 +15,9 @@ Chat ~~roulette~~ bot for finding people to talk for SPbU students.
       for invitation
 * ⏲ You have only one 12 hours to speak with your interlocutor (so you'd rather don't spend time wastefully 😉)
 * 🔕 It's not allowed to send any kind of links
+
+## How to start
+TODO
 
 ![Bot preview](markup/botPreview.png)
 
@@ -39,14 +41,15 @@ ____
        )
     2) Interactive work through mongosh
     3) *chatbot* db (collections: userForm)
+3) `vkconfig.properties` file containing group access token and id (contact contributors to obtain the config data)
 
 ## Contribution:
 
-If you'd like to help in developing this bot, write to me on:  
-Vk: https://vk.com/general_bum  
-Telegram :  @EmirVildanov
+If you'd like to help in developing this bot, write to one of contributors:  
+* [Emir Vildanov](https://vk.com/general_bum), Telegram :  @EmirVildanov
+* There may be you 😉
 
-If you would like to edit diagrams again write to me, and I will give give you an editor rights:
+If you'd like to edit diagrams, write to me, and I will give you an editor rights:
 
 * [**Link**](https://online.visual-paradigm.com/share.jsp?id=313930363330382d31) to Chat StateMachine diagram
 * [**Link**](https://dbdiagram.io/d/624954fad043196e39e57e3c) to DataBase diagram  

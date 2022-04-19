@@ -1,6 +1,7 @@
 package command.text
 
 import VkCore
+import VkServer.getUser
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.User
 import command.Command
@@ -14,9 +15,10 @@ Otherwise TextCommand is excepted as UnknownTextCommand
 abstract class TextCommand : Command() {
     override fun executeMessageWithUserInfo(message: Message, userId: Int, userInfo: User) {
         changeState(VkCore)
+        val user = getUser(userId)
         handleMessageText(message.text)
         val responseText = getResponseTextMessage()
-        VkCore.sendMessage(responseText, userId)
+        VkCore.sendMessage(responseText, userId, user.chatState)
         logSendingMessageToUserWithId(responseText, userId)
     }
 

@@ -1,4 +1,4 @@
-package enums
+package db.models.enums
 
 enum class Faculty(val facultyName: String) {
     MATH_MECH("Матмех"),

@@ -1,36 +1,21 @@
 import com.vk.api.sdk.exceptions.ClientException
-import com.vk.api.sdk.objects.base.Sex
-import data.UserForm
-import enums.Faculty
-import enums.Interest
+import enums.ChatState
+import db.interactor.ChatBotDb
+import db.models.User
+import db.models.UserForm
 import kotlinx.coroutines.*
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayAt
 
 
 object VkServer {
     private var vkCore: VkCore? = null
+    private var chatBotDb = ChatBotDb
     private const val RECONNECT_TIME_MILLISECONDS = 10000
     private const val BOT_RESPONSE_WAITING_TIME_MILLISECONDS = 300L
 
-    val client = KMongo.createClient().coroutine
-    val database = client.getDatabase("chatbot")
-    val collection = database.getCollection<UserForm>()
-
-    // kotlinx.serialization.MissingFieldException
-
-    private val usersInfo =
-        listOf(
-            UserForm(
-                1,
-                "Emir",
-                "Vildanov",
-                20,
-                Faculty.MATH_MECH,
-                Sex.MALE,
-                mutableListOf(Interest.PHOTOGRAPHY),
-            )
-        )
+    private val supervisorScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     init {
         try {
@@ -49,17 +34,19 @@ object VkServer {
             try {
                 val message = vkCore?.getMessage()
                 if (message != null) {
+                    val userId = message.fromId
                     customLog("Received message: ${message.text}")
-                    supervisorScope {
+                    supervisorScope.launch {
+                        val user = getUser(userId)
                         try {
-//                            withContext(Dispatchers.Default) {
-//                                CommandExecutor.execute(message)
-//                            }
+                            withContext(Dispatchers.Default) {
+                                command.CommandExecutor.execute(message, user.chatState)
+                            }
                             throw Exception()
                         } catch (e: Exception) {
 //                            customLog("Unexpected exception: ${e.message}")
                             customLog("Unexpected exception")
-                            VkCore.sendMessage("Unexpected error occurred on the server side", message.fromId)
+                            VkCore.sendMessage("Unexpected error occurred on the server side", message.fromId, state = user.chatState)
                         }
                     }
                 }
@@ -75,11 +62,46 @@ object VkServer {
         println(message)
     }
 
-    fun getUserInfo(userId: Int): UserForm {
-        return usersInfo[0]
+    fun registerNewUser(userId: Int) = supervisorScope.launch {
+        val userInfo = vkCore?.getUserInfoById(userId)
+        if (userInfo != null) {
+            val user = User(userId, Clock.System.todayAt(TimeZone.currentSystemDefault()))
+            val userForm = UserForm(userId, userInfo.firstName, userInfo.lastName)
+            chatBotDb.addNewUser(user, userForm)
+        }
     }
 
-    fun loadUserInfo(userId: Int, userDbInfo: UserForm) {
+    fun getUser(userId: Int): User {
+        val user: User?
+        runBlocking {
+            user = supervisorScope.async {
+                chatBotDb.getUser(userId)
+            }.await()
+        }
+        if (user == null) {
+            throw java.lang.RuntimeException("There is no user with id $userId in database")
+        }
+        return user
+    }
 
+    fun getUserForm(userId: Int): UserForm {
+        val userForm: UserForm?
+        runBlocking {
+            userForm = supervisorScope.async{
+                chatBotDb.getUserForm(userId)
+            }.await()
+        }
+        if (userForm == null) {
+            throw java.lang.RuntimeException("There is no user with id $userId in database")
+        }
+        return userForm
+    }
+
+    fun loadUserInfo(userId: Int, userDbInfo: UserForm?) {
+
+    }
+
+    fun changeUserState(userId: Int, chatState: ChatState) = supervisorScope.launch {
+        chatBotDb.changeUserState(userId, chatState)
     }
 }

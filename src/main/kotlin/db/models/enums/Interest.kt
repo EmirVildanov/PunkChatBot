@@ -1,4 +1,4 @@
-package enums
+package db.models.enums
 
 enum class Interest(val interestName: String) {
     PHOTOGRAPHY("Фотография"),

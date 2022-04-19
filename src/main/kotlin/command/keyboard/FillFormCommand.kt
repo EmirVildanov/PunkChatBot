@@ -1,18 +1,17 @@
 package command.keyboard
 
-import VkCore
 import VkServer
 import com.vk.api.sdk.objects.base.Sex
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.User
 import enums.ChatState
-import enums.Faculty
-import enums.Interest
+import db.models.enums.Faculty
+import db.models.enums.Interest
 
 class FillFormCommand(private val toState: ChatState) : KeyboardCommand() {
     override fun getResponseTextMessage(message: Message, userId: Int, userInfo: User): String {
         if (toState != ChatState.FILLING_FORM_MAIN_MENU) {
-            val userDbInfo = VkServer.getUserInfo(userId)
+            val userDbInfo = VkServer.getUserForm(userId)
             when (toState) {
                 ChatState.FILLING_FORM_FACULTY -> userDbInfo.faculty = Faculty.CHEM_PHAC
                 ChatState.FILLING_FORM_SEX -> userDbInfo.sex = Sex.FEMALE
@@ -28,7 +27,7 @@ class FillFormCommand(private val toState: ChatState) : KeyboardCommand() {
         }
     }
 
-    override fun changeState(vkCore: VkCore) {
-        vkCore.chatState = toState
+    override fun changeState(userId: Int) {
+        VkServer.changeUserState(userId, toState)
     }
 }

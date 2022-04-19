@@ -1,16 +1,17 @@
 package command.keyboard
 
 import VkCore
+import VkServer.getUser
 import com.vk.api.sdk.objects.messages.Message
 import com.vk.api.sdk.objects.users.User
 import command.Command
 
 abstract class KeyboardCommand : Command() {
     final override fun executeMessageWithUserInfo(message: Message, userId: Int, userInfo: User) {
-        changeState(VkCore)
-        log("Changed state to ${VkCore.chatState}")
+        changeState(userId)
+        val user = getUser(userId)
         val responseText = getResponseTextMessage(message, userId, userInfo)
-        VkCore.sendMessage(responseText, userId)
+        VkCore.sendMessage(responseText, userId, user.chatState)
         logSendingMessageToUserWithId(responseText, userId)
     }
 
@@ -18,5 +19,5 @@ abstract class KeyboardCommand : Command() {
         return EMPTY
     }
 
-    abstract fun changeState(vkCore: VkCore)
+    abstract fun changeState(userId: Int)
 }

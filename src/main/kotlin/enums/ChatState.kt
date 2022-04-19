@@ -1,6 +1,7 @@
 package enums
 
 enum class ChatState {
+    AUTHORIZATION,
     MAIN_MENU,
     FINDING_INTERLOCUTOR,
     TALKING,
